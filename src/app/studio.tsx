@@ -1343,17 +1343,20 @@ export const Studio: React.FC = () => {
         throw new Error('Failed to convert text to speech');
       }
 
-      const { audioUrl } = await response.json();
+      // Create a blob from the response and generate a URL
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
       
+      // Set the audio URL
+      setTtsAudioUrl(audioUrl);
+      setIsTtsConverted(true);
+
       // Create a new audio element to test the full audio
       const testAudio = new Audio(audioUrl);
       testAudio.addEventListener('loadedmetadata', () => {
         console.log('Audio duration:', testAudio.duration);
         setTtsDuration(testAudio.duration);
       });
-
-      setTtsAudioUrl(audioUrl);
-      setIsTtsConverted(true);
       
       toast({
         description: "TTS conversion completed successfully!",
@@ -1632,6 +1635,15 @@ export const Studio: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Cleanup function to revoke object URLs when component unmounts or URL changes
+    return () => {
+      if (ttsAudioUrl && ttsAudioUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(ttsAudioUrl);
+      }
+    };
+  }, [ttsAudioUrl]);
 
   return (
     <div className="container mx-auto p-2 min-h-screen relative font-sans bg-white flex flex-col">

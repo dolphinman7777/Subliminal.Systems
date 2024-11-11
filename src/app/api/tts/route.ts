@@ -91,21 +91,13 @@ export async function POST(request: Request) {
       throw new Error('Generated audio is empty');
     }
 
-    const audioBase64 = finalBuffer.toString('base64');
-    const audioUrl = `data:audio/mpeg;base64,${audioBase64}`;
-
-    console.log('TTS conversion completed successfully');
-    console.log('Total affirmations processed:', affirmations.length);
-    console.log('Individual affirmations:');
-    affirmations.forEach((aff: string, i: number) => {
-      console.log(`${i + 1}: ${aff.substring(0, 50)}... (${audioBuffers[i].length} bytes)`);
-    });
-
-    return NextResponse.json({ 
-      audioUrl,
-      affirmationsProcessed: affirmations.length,
-      audioSize: finalBuffer.length,
-      success: true
+    // Instead of returning a data URL, return the audio as a blob with proper headers
+    return new NextResponse(finalBuffer, {
+      headers: {
+        'Content-Type': 'audio/mpeg',
+        'Content-Disposition': 'attachment; filename="affirmation.mp3"',
+        'Cache-Control': 'no-cache'
+      }
     });
 
   } catch (error) {

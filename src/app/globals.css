@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import bento-grid styles */
+@import '../styles/bento-grid.css';
+
+/* Your other global styles */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+  }
+}
+
+@layer utilities {
+  .bg-background {
+    background-color: hsl(var(--background));
+  }
+  .text-foreground {
+    color: hsl(var(--foreground));
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom mobile ordering */
+@media (max-width: 767px) {
+  .bento-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bento-item {
+    width: 100% !important;
+  }
+
+  .bento-item-affirmations {
+    order: 2;
+  }
+
+  /* Add more order classes as needed for other components */
+  .bento-item-1 { order: 1; }
+  .bento-item-3 { order: 3; }
+  .bento-item-4 { order: 4; }
+  /* ... and so on ... */
+}
